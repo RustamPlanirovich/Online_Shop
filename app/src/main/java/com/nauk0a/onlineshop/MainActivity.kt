@@ -1,32 +1,44 @@
 package com.nauk0a.onlineshop
 
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.util.Patterns
-import android.view.View
-import android.widget.EditText
-import android.widget.Toast
-import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.nauk0a.onlineshop.databinding.ActivityMainBinding
-import com.nauk0a.onlineshop.databinding.LogInBinding
-import com.nauk0a.onlineshop.databinding.SignInBinding
+
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: SignInBinding
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = SignInBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //Отключаем системный цвет у элемнтов bottomNavView
+        binding.bottomNavView.itemIconTintList = null
 
+        //Создаем nav_host_fragment и подключаем его к bottomNavView
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragment.findNavController().run {
+            binding.bottomNavView.setupWithNavController(this)
+        }
 
+        //Радиус угла bottomNavView
+        val radius = resources.getDimension(R.dimen.bottomViewCornerRadius)
+
+        //Устанавливаем скругление углов у bottomNavView
+        val shapeDrawable: MaterialShapeDrawable =
+            binding.bottomNavView.background as MaterialShapeDrawable
+        shapeDrawable.shapeAppearanceModel = shapeDrawable.shapeAppearanceModel
+            .toBuilder()
+            .setTopLeftCorner(CornerFamily.ROUNDED,radius)
+            .setTopRightCorner(CornerFamily.ROUNDED,radius)
+            .build()
     }
 }

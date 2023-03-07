@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:paddingEnd="12dp"
+    android:layout_height="wrap_content">
+
+    <androidx.cardview.widget.CardView
+        app:cardCornerRadius="9dp"
+        android:layout_width="114dp"
+        android:layout_height="149dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/item_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageButton
+                android:id="@+id/item_add_buttton"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/add" />
+
+            <TextView
+                android:id="@+id/item_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="7dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/latest_price_text"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/latext_price"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/item_name"
+                android:layout_width="75dp"
+                android:layout_height="26dp"
+                android:layout_marginStart="7dp"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/latext_name"
+                android:textColor="#FBFBFB"
+                android:textSize="@dimen/description_text_size_9"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/item_price"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/item_tag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/tag_shape"
+                android:fontFamily="@font/poppins_semibold"
+                android:gravity="center"
+                android:text="@string/latest_category"
+                android:textSize="@dimen/latest_category"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/item_name"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>
