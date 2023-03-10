@@ -135,26 +135,26 @@ class DetailFragment : Fragment() {
         //Получаем аргументы по ключу latest
         val getArguments = arguments?.getSerializable("latest") as LatestModelDomain
         //Если аргументы не пустые
-        if (getArguments != null) {
-            //Устанавливаем цену товара
-            price = getArguments.price.toDouble()
-            //Устанавливаем цену товара на кнопке добавления в корзину
-            commonPrice = getArguments.price.toDouble()
-            //Устанавливаем название товара
-            binding.productName.text = getArguments.name
-            //Устанавливаем изображение товара
-            Glide
-                .with(requireActivity())
-                .load(getArguments.image_url)
-                .into(binding.productPhoto)
-            //Обновляем цены на загруженные
-            setPrice(price, commonPrice)
-            //Добавляем фото товара три раза для демонстрации работы карусели
-            repeat(3) {
-                data.add(ImagesModel(getArguments.image_url))
-            }
 
+        //Устанавливаем цену товара
+        price = getArguments.price.toDouble()
+        //Устанавливаем цену товара на кнопке добавления в корзину
+        commonPrice = getArguments.price.toDouble()
+        //Устанавливаем название товара
+        binding.productName.text = getArguments.name
+        //Устанавливаем изображение товара
+        Glide
+            .with(binding.root)
+            .load(getArguments.image_url)
+            .into(binding.productPhoto)
+        //Обновляем цены на загруженные
+        setPrice(price, commonPrice)
+        //Добавляем фото товара три раза для демонстрации работы карусели
+        repeat(3) {
+            data.add(ImagesModel(getArguments.image_url))
         }
+
+
     }
 
     // Метод в котором получаем данные из flash адаптера

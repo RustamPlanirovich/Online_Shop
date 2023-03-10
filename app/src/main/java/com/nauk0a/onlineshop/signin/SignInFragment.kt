@@ -1,6 +1,7 @@
 package com.nauk0a.onlineshop.signin
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
@@ -19,6 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.nauk0a.domain.models.UserDomain
 import com.nauk0a.onlineshop.App
+import com.nauk0a.onlineshop.MainActivity
 import com.nauk0a.onlineshop.R
 import com.nauk0a.onlineshop.databinding.SignInFragmentBinding
 import com.nauk0a.onlineshop.login.LogInFragment
@@ -52,7 +54,7 @@ class SignInFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         /** Создаем объект для доступа к привязке к представлению SignInFragmentBinding,
-        * которое будет использоваться во фрагменте */
+         * которое будет использоваться во фрагменте */
         binding = SignInFragmentBinding.inflate(inflater, container, false)
         // Возвращаем корневое представление привязки
         return binding.root
@@ -62,7 +64,7 @@ class SignInFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         /** Получаем строку для отображения входа в приложение,
-        * текст ссылки "Log In" и создаем SpannableString для создания ссылки на экране*/
+         * текст ссылки "Log In" и создаем SpannableString для создания ссылки на экране*/
         val fullText = getString(R.string.already_have_an_account)
         val login = getString(R.string.log_in)
         val spannableString = SpannableString(fullText)
@@ -92,7 +94,7 @@ class SignInFragment : Fragment() {
         )
 
         /** Устанавливаем SpannableString в текстовое поле на экране и устанавливаем свойства,
-        * чтобы ссылка была кликабельной */
+         * чтобы ссылка была кликабельной */
         binding.haveAccountText.run {
             text = spannableString
             movementMethod = LinkMovementMethod.getInstance()
@@ -133,10 +135,11 @@ class SignInFragment : Fragment() {
                                 // Если все поля заполнены, проверяем правильность ввода электронной почты
                                 if (checkEmailField(binding.emailEditText)) {
                                     /** Если электронная почта введена правильно,
-                                    * добавляем нового пользователя в базу данных
-                                    * и переходим на экран входа в приложение */
+                                     * добавляем нового пользователя в базу данных
+                                     * и переходим на экран входа в приложение */
                                     addNewUser()
-                                    goToLogInScreen()
+                                    viewModel.saveUserName(binding.firstNameEditText.text.toString())
+                                    goToHomeScreen()
                                 } else {
                                     // Если почта введена неверно, показываем сообщение об ошибке
                                     Toast.makeText(
@@ -151,6 +154,12 @@ class SignInFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun goToHomeScreen() {
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        startActivity(intent)
+        activity?.finish()
     }
 
     // Функция для перехода на экран входа в приложение

@@ -9,12 +9,16 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.nauk0a.onlineshop.App
+import com.nauk0a.onlineshop.HorizontalItem
 import com.nauk0a.onlineshop.R
 import com.nauk0a.onlineshop.databinding.HomeFragmentBinding
 import javax.inject.Inject
@@ -22,9 +26,9 @@ import javax.inject.Inject
 class HomeFragment : Fragment() {
 
     private lateinit var binding: HomeFragmentBinding
-    private lateinit var categoryAdapter: CategoryAdapter
-    private lateinit var latestAdapter: LatestAdapter
-    private lateinit var flashAdapter: FlashSaleAdapter
+
+    private val categoryAdapter = HomeScreenAdapter()
+    private val searchList = mutableListOf<String>()
 
     //Инжектируем viewModel
     @Inject
@@ -45,19 +49,22 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         /** Создаем объект для доступа к привязке к представлению HomeFragmentBinding,
-         которое будет использоваться во фрагменте **/
+        которое будет использоваться во фрагменте **/
         binding = HomeFragmentBinding.inflate(inflater, container, false)
+        //Запрашиваем лист с категориями
+        viewModel.getCategoryList()
+        //Запрашиваем данные из API
+        viewModel.showData()
+        //Запрашиваем аватар пользователя
+        viewModel.getUri()
+
+        viewModel.getSearchWords()
         // Возвращаем корневое представление привязки
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //Запрашиваем лист с категориями
-        viewModel.getCategoryList()
-        //Запрашиваем данные из API
-        viewModel.showData()
 
         //Создаем SpannableString для dashboardTitle
         val spannable = SpannableString(binding.dashboardTitle.text.toString())
@@ -76,46 +83,51 @@ class HomeFragment : Fragment() {
         //Устанавливаем ранее созданный SpannableString к dashboardTitle
         binding.dashboardTitle.text = spannable
 
-        //Инициализируем адаптер для отображения категорий
-        categoryAdapter = CategoryAdapter()
-        //Инициализируем адаптер для отображения последних просмотренных товаров
-        latestAdapter = LatestAdapter()
-        //Инициализируем адаптер для отображения товаров со скидкой
-        flashAdapter = FlashSaleAdapter()
-
         /**Для отображения брендов не создавал отдельного адаптера,
         а переиспользовал latestAdapter, т.к в ТЗ не было явно указано
         откуда брать или как формировать данный блок **/
 
         //Присваиваем адаптер categoryAdapter к categoryRecyclerView
         binding.categoryRecyclerView.adapter = categoryAdapter
-        //Присваиваем адаптер latestRecyclerView2 к latestAdapter
-        binding.latestRecyclerView2.adapter = latestAdapter
-        //Присваиваем адаптер flashRecyclerView3 к flashAdapter
-        binding.flashRecyclerView3.adapter = flashAdapter
-        //Присваиваем адаптер brandsRecyclerView к latestAdapter
-        binding.brandsRecyclerView.adapter = latestAdapter
 
         //Получаем данные с категорией товаров
         viewModel.categoryList.observe(viewLifecycleOwner) { categoryList ->
-            categoryAdapter.submitList(categoryList)
+            viewModel.latestList.observe(viewLifecycleOwner) { latest ->
+                viewModel.flashList.observe(viewLifecycleOwner) { flash ->
+                    categoryAdapter.apply {
+                        items = listOf(
+                            HorizontalItem("", categoryList),
+                            HorizontalItem("Latest", latest!!),
+                            HorizontalItem("Flash", flash!!),
+                            HorizontalItem("Brand", latest)
+                        )
+                    }
+                }
+            }
         }
 
-        //Получаем данные с последними просмотренными товарами
-        viewModel.latestList.observe(viewLifecycleOwner) { latest ->
-            latestAdapter.submitList(latest)
+        viewModel.searchWordsData.observe(viewLifecycleOwner) { wordsList ->
+            Toast.makeText(requireContext(), "$wordsList", Toast.LENGTH_SHORT).show()
+            searchList.clear()
+            if (wordsList != null) {
+                searchList.addAll(wordsList)
+            }
         }
 
-        //Получаем данные с товарами со скидкой
-        viewModel.flashList.observe(viewLifecycleOwner) { flash ->
-            flashAdapter.submitList(flash)
-        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.search_item, searchList)
+        binding.searchEditText.setAdapter(adapter)
 
         /** Получаем ошибки которые могут возникнуть при загрузке
          * последних просмотренных товаров и товаров со скидкой
          */
         viewModel.errorApiDownloadData.observe(viewLifecycleOwner) { errorMessage ->
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+        }
+
+        viewModel.selectPhotoUri.observe(viewLifecycleOwner) { uri ->
+            Glide.with(requireContext())
+                .load(uri)
+                .into(binding.avatar)
         }
 
         //При клике на avatar переходим в profileFragment

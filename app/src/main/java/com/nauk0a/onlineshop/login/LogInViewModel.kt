@@ -1,5 +1,6 @@
 package com.nauk0a.onlineshop.login
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class LogInViewModel @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
     private val userDaoUseCase: GetUserUserDaoUseCase,
 ) : ViewModel() {
 
@@ -24,6 +26,10 @@ class LogInViewModel @Inject constructor(
         viewModelScope.launch {
             _userExists.postValue(userDaoUseCase.getUserByFirstNameAndLastName(firstName, lastName))
         }
+    }
+
+    fun saveUserName(userName:String){
+        sharedPreferences.edit().putString("userName", userName).apply()
     }
 
 }

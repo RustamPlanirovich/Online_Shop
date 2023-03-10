@@ -6,9 +6,11 @@ import com.nauk0a.domain.models.LatestDomain
 import com.nauk0a.domain.models.LatestModelDomain
 
 
-fun Latest.mapToDomain() = LatestDomain(
-    latest = latest.map { it.mapToDomain() }
-)
+fun Latest.mapToDomain() = latest?.let {
+    LatestDomain(
+        latest = it.map { it.mapToDomain() }
+    )
+}
 
 fun LatestModel.mapToDomain() = LatestModelDomain(
     category = category, name = name, price = price, image_url = image_url

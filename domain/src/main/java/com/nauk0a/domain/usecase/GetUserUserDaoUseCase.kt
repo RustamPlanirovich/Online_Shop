@@ -16,4 +16,9 @@ class GetUserUserDaoUseCase (private val userRepository: UserRepository) {
     suspend fun isUserExists(firstName: String):Boolean {
         return userRepository.isUserExists(firstName)
     }
+
+    suspend fun getUserName(firstName: String): UserDomain? {
+        return userRepository.getUserName(firstName)
+    }
+
 }

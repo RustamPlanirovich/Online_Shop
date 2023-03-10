@@ -3,6 +3,7 @@ package com.nauk0a.onlineshop.di
 import com.nauk0a.data.remote.MyApi
 import com.nauk0a.data.repositroy.RetrofitRepositoryImpl
 import com.nauk0a.domain.usecase.RetrofitUseCase
+import com.nauk0a.onlineshop.BuildConfig
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -16,17 +17,17 @@ class RetrofitModule {
 
     @Provides
     fun provideRetrofit(): Retrofit {
-        val mHttpLoggingInterceptor = HttpLoggingInterceptor()
-            .setLevel(HttpLoggingInterceptor.Level.BODY)
-        val mOkHttpClient = OkHttpClient
-            .Builder()
-            .addInterceptor(mHttpLoggingInterceptor)
-            .build()
-
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(mOkHttpClient)
+            .client(
+                OkHttpClient.Builder()
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+                        else HttpLoggingInterceptor.Level.NONE
+                    })
+                    .build()
+            )
             .build()
     }
 

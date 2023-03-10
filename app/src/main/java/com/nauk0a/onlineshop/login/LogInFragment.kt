@@ -53,12 +53,11 @@ class LogInFragment : Fragment() {
                 binding.firstNameEditText.text.toString(),
                 binding.passwordEditText.text.toString()
             )
+            viewModel.saveUserName(binding.firstNameEditText.text.toString())
             viewModel.userExists.observe(viewLifecycleOwner) { user ->
                 //Возвращается ответ и если он не null, то переходим в MainActivity
                 if (user != null) {
-                    val intent = Intent(requireContext(), MainActivity::class.java)
-                    startActivity(intent)
-                    activity?.finish()
+                    goToHomeScreen()
                 } else {
                     //если null то показываем сообщение с ошибкой
                     Toast.makeText(
@@ -70,5 +69,11 @@ class LogInFragment : Fragment() {
 
             }
         }
+    }
+
+    private fun goToHomeScreen() {
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        startActivity(intent)
+        activity?.finish()
     }
 }

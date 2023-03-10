@@ -12,4 +12,6 @@ interface UserRepository {
     ): UserDomain?
 
     suspend fun isUserExists(firstName: String): Boolean
+
+    suspend fun getUserName(firstName: String): UserDomain?
 }

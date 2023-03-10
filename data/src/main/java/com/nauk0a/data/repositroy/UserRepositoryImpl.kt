@@ -37,5 +37,9 @@ class UserRepositoryImpl(private val userDao: UserDao) : UserRepository {
         }
     }
 
+    override suspend fun getUserName(firstName: String): UserDomain? {
+       return userDao.getUserByFirstName(firstName)?.mapToDomain()
+    }
+
 
 }
